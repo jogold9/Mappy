@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Mappy</string>
+    <string name="address"> Please enter an address </string>
+    <string name="launchMap"> Launch Navigation </string>
+    <string name="GoogleTransit">Google Transit Directions</string>
+    <string name="GoogleBicycle">Google Bicycling Directions</string>
+    <string name="GoogleDriving">Google Driving Directions</string>
+    <string name="GoogleWalking">Google Walking Directions</string>
+</resources>
