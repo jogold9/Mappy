@@ -13,8 +13,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private String friendlyLocation = "";
@@ -32,7 +34,7 @@ public class MainActivity extends Activity {
         final RadioButton googBikeButton = (RadioButton) findViewById(R.id.googBicycleButton);
         final RadioButton googDrivingButton = (RadioButton) findViewById(R.id.googDrivingButton);
         final RadioButton googWalkingButton = (RadioButton) findViewById(R.id.googWalkButton);
-        final Button exitButton = (Button)findViewById(R.id.exit_button);
+        final Button exitButton = (Button) findViewById(R.id.exit_button);
 
 
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -47,13 +49,25 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                getDestination(addressFieldSpinner);  //gets the destination user has entered
+                //1. Find out where user wants to go
+                getDestination(addressFieldSpinner);
 
-                LaunchNavChoice(googTransitButton, googBikeButton, googDrivingButton, googWalkingButton);
+                //2. Check for custom address
+                if (address.equals("Custom")) {
+                    getCustomAddress();
+                }
+
+                else {
+                    //3. Find out what transportation method user wants
+                    GetTransportType(googTransitButton, googBikeButton, googDrivingButton, googWalkingButton);
+
+                    //4. Get directions from Google Maps
+                    getGoogleDirections(mode);
+                }
             }
         });
 
-        View.OnClickListener exit = new View.OnClickListener(){
+        View.OnClickListener exit = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
@@ -63,104 +77,86 @@ public class MainActivity extends Activity {
         exitButton.setOnClickListener(exit);
     }
 
-    private void LaunchNavChoice(RadioButton googTransitButton, RadioButton googBikeButton, RadioButton googDrivingButton, RadioButton
-            googWalkingButton) {
-
-        if (googBikeButton.isChecked()){
-            mode = "&mode=b";
-            getGoogleDirections(mode);
-        }
-        else if (googDrivingButton.isChecked()){
-            mode = "&mode=d";
-            getGoogleDirections(mode);
-        }
-        else if (googTransitButton.isChecked()) {
-            mode = "&mode=transit";
-            getGoogleDirections(mode);
-        }
-        else if (googWalkingButton.isChecked()){
-            mode = "&mode=w";
-            getGoogleDirections(mode);
-        }
-    }
-
     private void getDestination(Spinner addressFieldSpinner) {
         friendlyLocation = addressFieldSpinner.getSelectedItem().toString();
 
         if (friendlyLocation.equals("Home")) {
-            address = "2617 SE 35th Place, 97202";
+            address = getString(R.string.homeAddress);
         } else if (friendlyLocation.equals("Sarahs house")) {
-            address = "3946 NE Failing, 97212";
+            address = getString(R.string.SarahsAddress);
         } else if (friendlyLocation.equals("Work")) {
-            address = "619 SW 11th Avenue, 97205";
+            address = getString(R.string.workAddress);
         } else if (friendlyLocation.equals("Custom")) {
-            //have an AlertDialog that pops up with an EditText for entering the item then you just add that to your Array
-            //http://stackoverflow.com/questions/15672767/allow-users-to-enter-new-value-in-spinner
-            address = friendlyLocation;
+            address = "Custom";
         } else {
+            //do nothing
         }
+    }
+
+    private String GetTransportType(RadioButton googTransitButton, RadioButton googBikeButton, RadioButton googDrivingButton, RadioButton
+            googWalkingButton) {
+
+        if (googBikeButton.isChecked()) {
+            mode = "&mode=b";  //user chose biking
+        } else if (googDrivingButton.isChecked()) {
+            mode = "&mode=d"; //user choose driving
+        } else if (googTransitButton.isChecked()) {
+            mode = "&mode=transit";  //user chose public transit
+        } else if (googWalkingButton.isChecked()) {
+            mode = "&mode=w"; //user chose walking
+        }
+        return mode;
     }
 
     private void getGoogleDirections(String mode) {
         boolean connected = isConnected();
 
-        if (!connected){
+        if (!connected) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Mappy is sorry...")
                     .setIcon(R.mipmap.ic_launcher)
                     .setMessage("You do not have a mobile or wifi connection with internet service at this time.")
                     .setCancelable(false)
-                    .setNegativeButton("OK",new DialogInterface.OnClickListener() {
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                         }
                     });
             AlertDialog alert = builder.create();
             alert.show();
-        }
-        else {
+        } else if (address == null || address.equals("")) {
+            Toast.makeText(MainActivity.this, "It looks like you select custom address, but did not enter an address.", Toast.LENGTH_LONG).show();
+        } else {
             try {
                 address = address.replace(' ', '+');
                 Uri mapsIntentUri = Uri.parse("google.navigation:q=" + address + mode);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, mapsIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 startActivity(mapIntent);
-            }
-            catch (Exception exception) {
+            } catch (Exception exception) {
+                Toast.makeText(MainActivity.this, "Oh noes!  We are unable to navigate to destination for some reason.  Please try formatting " +
+                                "your address a little differently, or try again later.",
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
 
- /*   private void getWazeCarDirections() {
-        try {
-            address = address.replace(' ', '+');
-            Uri mapsIntentUri = Uri.parse("waze.navigation:q=" + address);
-            Intent mapIntent = new Intent( Intent.ACTION_VIEW, mapsIntentUri);
-            startActivity(mapIntent);
-
-            //if Waze is not installed, take user to page where they can download and install Waze
-        } catch (ActivityNotFoundException exception) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.waze"));
-        }
-    }*/
-
     public class SpinnerActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
-        public void onItemSelected(AdapterView<?> parent, View view,int pos, long id) {
-            // An item was selected. You can retrieve the selected item using
-            // parent.getItemAtPosition(pos)
+        public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+
             friendlyLocation = parent.getItemAtPosition(pos).toString();
 
-            if (friendlyLocation.equals("Home")) {
+          /*  if (friendlyLocation.equals("Home")) {
                 address = "2617 SE 35th Place";
             } else if (friendlyLocation.equals("Sarahs house")) {
                 address = "3946 NE Failing, Portland, OR 97212";
             } else if (friendlyLocation.equals("Work")) {
                 address = "619 SW 11th Avenue, Portland, OR 97205";
             } else if (friendlyLocation.equals("Custom")) {
-                address = friendlyLocation;
+                address = getCustomAddress();
             } else {
-            }
+            }*/
         }
 
         public void onNothingSelected(AdapterView<?> parent) {
@@ -169,11 +165,49 @@ public class MainActivity extends Activity {
         }
     }
 
+    private String getCustomAddress() {
+        final EditText addressEditText = new EditText(this);
+        final String[] customAddress = {""};
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Please enter destination address");
+        alertDialog.setView(addressEditText);
+        alertDialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int whichButton) {
+                customAddress[0] = addressEditText.getText().toString();
+                address = customAddress[0];
+                doNext();
+            }
+        });
+        alertDialog.setNegativeButton("CANCEL", null);
+        alertDialog.create().show();
+
+        return customAddress[0];
+    }
+
+    private void doNext(){
+        final RadioButton googTransitButton = (RadioButton) findViewById(R.id.googTransitButton);
+        final RadioButton googBikeButton = (RadioButton) findViewById(R.id.googBicycleButton);
+        final RadioButton googDrivingButton = (RadioButton) findViewById(R.id.googDrivingButton);
+        final RadioButton googWalkingButton = (RadioButton) findViewById(R.id.googWalkButton);
+
+        //3. Find out what transportation method user wants
+        GetTransportType(googTransitButton, googBikeButton, googDrivingButton, googWalkingButton);
+
+        //4. Get directions from Google Maps
+        getGoogleDirections(mode);
+
+    }
+
     //Checks for mobile or wifi connectivity, returns true for connected, false otherwise
     private boolean isConnected() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+            return true;
+        } else {
+            return false;
+        }
     }
-
 }

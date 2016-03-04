@@ -6,4 +6,7 @@
     <string name="GoogleBicycle">Google Bicycling Directions</string>
     <string name="GoogleDriving">Google Driving Directions</string>
     <string name="GoogleWalking">Google Walking Directions</string>
+    <string name="homeAddress">2617 SE 35th Place, 97202</string>
+    <string name="SarahsAddress">3946 NE Failing, 97212</string>
+    <string name="workAddress">619 SW 11th Avenue, 97205</string>
 </resources>
