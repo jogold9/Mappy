@@ -34,8 +34,6 @@ public class MainActivity extends Activity {
         final RadioButton googBikeButton = (RadioButton) findViewById(R.id.googBicycleButton);
         final RadioButton googDrivingButton = (RadioButton) findViewById(R.id.googDrivingButton);
         final RadioButton googWalkingButton = (RadioButton) findViewById(R.id.googWalkButton);
-        final Button exitButton = (Button) findViewById(R.id.exit_button);
-
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -67,14 +65,6 @@ public class MainActivity extends Activity {
             }
         });
 
-        View.OnClickListener exit = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        };
-
-        exitButton.setOnClickListener(exit);
     }
 
     private void getDestination(Spinner addressFieldSpinner) {
@@ -146,17 +136,7 @@ public class MainActivity extends Activity {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
             friendlyLocation = parent.getItemAtPosition(pos).toString();
-
-          /*  if (friendlyLocation.equals("Home")) {
-                address = "2617 SE 35th Place";
-            } else if (friendlyLocation.equals("Sarahs house")) {
-                address = "3946 NE Failing, Portland, OR 97212";
-            } else if (friendlyLocation.equals("Work")) {
-                address = "619 SW 11th Avenue, Portland, OR 97205";
-            } else if (friendlyLocation.equals("Custom")) {
-                address = getCustomAddress();
-            } else {
-            }*/
+            
         }
 
         public void onNothingSelected(AdapterView<?> parent) {

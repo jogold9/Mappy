@@ -41,6 +41,8 @@
         android:layout_marginTop="15dp"
         android:padding="10dp"
         android:textColor="@android:color/black"
+        android:drawableEnd="@drawable/ic_maps_directions_bike"
+        android:drawableRight="@drawable/ic_maps_directions_bike"
         android:textSize="12sp"/>
 
     <RadioButton
@@ -55,6 +57,8 @@
         android:layout_marginTop="15dp"
         android:padding="10dp"
         android:textColor="@android:color/black"
+        android:drawableEnd="@drawable/ic_maps_directions_car"
+        android:drawableRight="@drawable/ic_maps_directions_car"
         android:textSize="12sp"/>
 
      <RadioButton
@@ -69,6 +73,8 @@
          android:layout_marginTop="15dp"
          android:padding="10dp"
          android:textColor="@android:color/black"
+         android:drawableEnd="@drawable/ic_maps_directions_bus"
+         android:drawableRight="@drawable/ic_maps_directions_bus"
          android:textSize="12sp"/>
 
     <RadioButton
@@ -83,6 +89,8 @@
         android:layout_marginTop="15dp"
         android:padding="10dp"
         android:textColor="@android:color/black"
+        android:drawableEnd="@drawable/ic_maps_directions_walk"
+        android:drawableRight="@drawable/ic_maps_directions_walk"
         android:textSize="12sp"/>
  </RadioGroup>
 
@@ -91,7 +99,7 @@
         android:layout_height="wrap_content"
         android:text="@string/launchMap"
         android:id="@+id/launchMapButton"
-        android:layout_above="@+id/exit_button"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/buttons"
         android:alpha="0.50"
@@ -99,24 +107,5 @@
         android:layout_marginBottom="15dp"
         android:padding="10dp"
         android:textSize="18sp"/>
-
-
-    <Button
-        android:id="@+id/exit_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Exit"
-        android:background="@drawable/buttons"
-        android:alpha="0.50"
-        android:padding="10dp"
-        android:layout_marginBottom="15dp"
-        android:textSize="18sp"
-        android:textAllCaps="false"
-        />
-
-
-
 
 </RelativeLayout>
