@@ -136,7 +136,7 @@ public class MainActivity extends Activity {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
             friendlyLocation = parent.getItemAtPosition(pos).toString();
-            
+
         }
 
         public void onNothingSelected(AdapterView<?> parent) {

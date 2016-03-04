@@ -10,8 +10,10 @@
         android:icon="@drawable/ic_maps_directions_car"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:screenOrientation="nosensor"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+                  android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
