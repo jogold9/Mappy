@@ -5,10 +5,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,6 +23,10 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     private String friendlyLocation = "";
     private String address = "";
+    private String homeAddress = "";
+    private String BFFAddress = "";
+    private String workAddress = "";
+    private String customAddress = "";
     private String mode = "@mode=d";  //mode b is bicycling, mode d is for driving, mode t is for transit, mode w is for walking
 
     @Override
@@ -34,6 +40,11 @@ public class MainActivity extends Activity {
         final RadioButton googBikeButton = (RadioButton) findViewById(R.id.googBicycleButton);
         final RadioButton googDrivingButton = (RadioButton) findViewById(R.id.googDrivingButton);
         final RadioButton googWalkingButton = (RadioButton) findViewById(R.id.googWalkButton);
+
+        homeAddress = loadPrefs("home", homeAddress);
+        BFFAddress = loadPrefs("best friend forever", BFFAddress);
+        workAddress = loadPrefs("work", workAddress);
+        customAddress = loadPrefs("custom", customAddress);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -53,6 +64,7 @@ public class MainActivity extends Activity {
                 //2. Check for custom address
                 if (address.equals("Custom")) {
                     getCustomAddress();
+                    savePrefs("custom", address);
                 }
 
                 else {
@@ -64,22 +76,44 @@ public class MainActivity extends Activity {
                 }
             }
         });
-
     }
 
     private void getDestination(Spinner addressFieldSpinner) {
         friendlyLocation = addressFieldSpinner.getSelectedItem().toString();
 
         if (friendlyLocation.equals("Home")) {
-            address = getString(R.string.homeAddress);
-        } else if (friendlyLocation.equals("Sarahs house")) {
-            address = getString(R.string.SarahsAddress);
-        } else if (friendlyLocation.equals("Work")) {
-            address = getString(R.string.workAddress);
-        } else if (friendlyLocation.equals("Custom")) {
+            if (homeAddress.equals("")){
+                address = getCustomAddress();
+                savePrefs("home", address);
+            }
+            else {
+                address = homeAddress;
+            }
+        }
+
+        else if (friendlyLocation.equals("Best Friend Forever")) {
+            if (BFFAddress.equals("")){
+                address = getCustomAddress();
+                savePrefs("best friend forever", address);
+            }
+            else {
+                address = BFFAddress;
+            }
+        }
+
+        else if (friendlyLocation.equals("Work")) {
+            if (workAddress.equals("")){
+                address = getCustomAddress();
+                savePrefs("work", address);
+            }
+            else {
+                address = workAddress;
+            }
+        }
+
+        else if (friendlyLocation.equals("Custom")) {
             address = "Custom";
-        } else {
-            //do nothing
+
         }
     }
 
@@ -118,6 +152,8 @@ public class MainActivity extends Activity {
             Toast.makeText(MainActivity.this, "It looks like you select custom address, but did not enter an address.", Toast.LENGTH_LONG).show();
         } else {
             try {
+
+                Toast.makeText(getApplicationContext(), "Getting directions for address: " + address, Toast.LENGTH_LONG).show();
                 address = address.replace(' ', '+');
                 Uri mapsIntentUri = Uri.parse("google.navigation:q=" + address + mode);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, mapsIntentUri);
@@ -157,7 +193,7 @@ public class MainActivity extends Activity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 customAddress[0] = addressEditText.getText().toString();
                 address = customAddress[0];
-                doNext();
+                doNext();  //this line required to allow input of custom address BEFORE getting directions
             }
         });
         alertDialog.setNegativeButton("CANCEL", null);
@@ -189,5 +225,19 @@ public class MainActivity extends Activity {
         } else {
             return false;
         }
+    }
+
+    //save prefs
+    public void savePrefs(String key, String value){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    //get prefs
+    public String loadPrefs(String key, String value){
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        return sharedPreferences.getString(key, value);
     }
 }
