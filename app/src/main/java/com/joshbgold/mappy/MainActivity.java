@@ -27,7 +27,8 @@ public class MainActivity extends Activity {
     private String BFFAddress = "";
     private String workAddress = "";
     private String customAddress = "";
-    private String mode = "@mode=d";  //mode b is bicycling, mode d is for driving, mode t is for transit, mode w is for walking
+    private String mode = "@mode=d";  //mode b is bicycling, d is for driving, t is for transit, w is for walking
+    protected String destinationType = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,22 +59,8 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                //1. Find out where user wants to go
                 getDestination(addressFieldSpinner);
 
-                //2. Check for custom address
-                if (address.equals("Custom")) {
-                    getCustomAddress();
-                    savePrefs("custom", address);
-                }
-
-                else {
-                    //3. Find out what transportation method user wants
-                    GetTransportType(googTransitButton, googBikeButton, googDrivingButton, googWalkingButton);
-
-                    //4. Get directions from Google Maps
-                    getGoogleDirections(mode);
-                }
             }
         });
     }
@@ -83,38 +70,57 @@ public class MainActivity extends Activity {
 
         if (friendlyLocation.equals("Home")) {
             if (homeAddress.equals("")){
-                address = getCustomAddress();
-                savePrefs("home", address);
+                address = getCustomAddress("Home");
             }
             else {
                 address = homeAddress;
+                doNext(destinationType);
             }
         }
 
         else if (friendlyLocation.equals("Best Friend Forever")) {
             if (BFFAddress.equals("")){
-                address = getCustomAddress();
-                savePrefs("best friend forever", address);
+                address = getCustomAddress("BFF");
             }
             else {
                 address = BFFAddress;
+                doNext(destinationType);
             }
         }
 
         else if (friendlyLocation.equals("Work")) {
             if (workAddress.equals("")){
-                address = getCustomAddress();
-                savePrefs("work", address);
+                address = getCustomAddress("Work");
             }
             else {
                 address = workAddress;
+                doNext(destinationType);
             }
         }
 
         else if (friendlyLocation.equals("Custom")) {
-            address = "Custom";
-
+            if(customAddress.equals("")){
+                address = getCustomAddress("Custom");
+            }
+            else {
+                address = customAddress;
+                doNext(destinationType);
+            }
         }
+    }
+
+    private void doNext(String destinationType){
+        final RadioButton googTransitButton = (RadioButton) findViewById(R.id.googTransitButton);
+        final RadioButton googBikeButton = (RadioButton) findViewById(R.id.googBicycleButton);
+        final RadioButton googDrivingButton = (RadioButton) findViewById(R.id.googDrivingButton);
+        final RadioButton googWalkingButton = (RadioButton) findViewById(R.id.googWalkButton);
+
+        //3. Find out what transportation method user wants
+        GetTransportType(googTransitButton, googBikeButton, googDrivingButton, googWalkingButton);
+
+        //4. Get directions from Google Maps
+        getGoogleDirections(mode);
+
     }
 
     private String GetTransportType(RadioButton googTransitButton, RadioButton googBikeButton, RadioButton googDrivingButton, RadioButton
@@ -181,7 +187,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    private String getCustomAddress() {
+    private String getCustomAddress(final String destinationType) {
         final EditText addressEditText = new EditText(this);
         final String[] customAddress = {""};
 
@@ -193,27 +199,29 @@ public class MainActivity extends Activity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 customAddress[0] = addressEditText.getText().toString();
                 address = customAddress[0];
-                doNext();  //this line required to allow input of custom address BEFORE getting directions
+
+                //save address to shared preferences
+                if (destinationType.equals("Home")){
+                    savePrefs("home", address);
+                }
+                else if (destinationType.equals("BFF")){
+                    savePrefs("best friend forever", address);
+                }
+                else if (destinationType.equals("Work")){
+                    savePrefs("work", address);
+                }
+
+                else if (destinationType.equals("Custom")){
+                    savePrefs("custom", address);
+                }
+
+                doNext(destinationType);  //this line required to allow input of custom address BEFORE getting directions
             }
         });
         alertDialog.setNegativeButton("CANCEL", null);
         alertDialog.create().show();
 
-        return customAddress[0];
-    }
-
-    private void doNext(){
-        final RadioButton googTransitButton = (RadioButton) findViewById(R.id.googTransitButton);
-        final RadioButton googBikeButton = (RadioButton) findViewById(R.id.googBicycleButton);
-        final RadioButton googDrivingButton = (RadioButton) findViewById(R.id.googDrivingButton);
-        final RadioButton googWalkingButton = (RadioButton) findViewById(R.id.googWalkButton);
-
-        //3. Find out what transportation method user wants
-        GetTransportType(googTransitButton, googBikeButton, googDrivingButton, googWalkingButton);
-
-        //4. Get directions from Google Maps
-        getGoogleDirections(mode);
-
+        return address;
     }
 
     //Checks for mobile or wifi connectivity, returns true for connected, false otherwise
