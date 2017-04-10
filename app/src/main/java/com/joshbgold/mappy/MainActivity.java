@@ -24,7 +24,6 @@ public class MainActivity extends Activity {
     private String friendlyLocation = "";
     private String address = "";
     private String homeAddress = "";
-    private String BFFAddress = "";
     private String workAddress = "";
     private String customAddress = "";
     private String mode = "@mode=d";  //mode b is bicycling, d is for driving, t is for transit, w is for walking
@@ -43,9 +42,7 @@ public class MainActivity extends Activity {
         final RadioButton googWalkingButton = (RadioButton) findViewById(R.id.googWalkButton);
 
         homeAddress = loadPrefs("home", homeAddress);
-        BFFAddress = loadPrefs("best friend forever", BFFAddress);
         workAddress = loadPrefs("work", workAddress);
-        customAddress = loadPrefs("custom", customAddress);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -74,16 +71,6 @@ public class MainActivity extends Activity {
             }
             else {
                 address = homeAddress;
-                doNext(destinationType);
-            }
-        }
-
-        else if (friendlyLocation.equals("Best Friend Forever")) {
-            if (BFFAddress.equals("")){
-                address = getCustomAddress("BFF");
-            }
-            else {
-                address = BFFAddress;
                 doNext(destinationType);
             }
         }
@@ -204,15 +191,9 @@ public class MainActivity extends Activity {
                 if (destinationType.equals("Home")){
                     savePrefs("home", address);
                 }
-                else if (destinationType.equals("BFF")){
-                    savePrefs("best friend forever", address);
-                }
+
                 else if (destinationType.equals("Work")){
                     savePrefs("work", address);
-                }
-
-                else if (destinationType.equals("Custom")){
-                    savePrefs("custom", address);
                 }
 
                 doNext(destinationType);  //this line required to allow input of custom address BEFORE getting directions

@@ -2,7 +2,6 @@
 <resources>
     <string-array name="locations_array">
         <item>Home</item>
-        <item>Best Friend Forever</item>
         <item>Work</item>
         <item>Custom</item>
     </string-array>
