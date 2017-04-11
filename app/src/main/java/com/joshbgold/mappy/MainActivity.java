@@ -25,7 +25,6 @@ public class MainActivity extends Activity {
     private String address = "";
     private String homeAddress = "";
     private String workAddress = "";
-    private String customAddress = "";
     private String mode = "@mode=d";  //mode b is bicycling, d is for driving, t is for transit, w is for walking
     protected String destinationType = "";
 
@@ -36,10 +35,6 @@ public class MainActivity extends Activity {
 
         final Spinner addressFieldSpinner = (Spinner) findViewById(R.id.dropdownEditText);
         final Button launchMapButton = (Button) findViewById(R.id.launchMapButton);
-        final RadioButton googTransitButton = (RadioButton) findViewById(R.id.googTransitButton);
-        final RadioButton googBikeButton = (RadioButton) findViewById(R.id.googBicycleButton);
-        final RadioButton googDrivingButton = (RadioButton) findViewById(R.id.googDrivingButton);
-        final RadioButton googWalkingButton = (RadioButton) findViewById(R.id.googWalkButton);
 
         homeAddress = loadPrefs("home", homeAddress);
         workAddress = loadPrefs("work", workAddress);
@@ -71,7 +66,8 @@ public class MainActivity extends Activity {
             }
             else {
                 address = homeAddress;
-                doNext(destinationType);
+                Toast.makeText(MainActivity.this, "Home address is set to " + address, Toast.LENGTH_LONG).show();
+                Navigate();
             }
         }
 
@@ -81,22 +77,24 @@ public class MainActivity extends Activity {
             }
             else {
                 address = workAddress;
-                doNext(destinationType);
+                Toast.makeText(MainActivity.this, "Work address is set to " + address, Toast.LENGTH_LONG).show();
+                Navigate();
             }
         }
 
         else if (friendlyLocation.equals("Custom")) {
+            String customAddress = "";
             if(customAddress.equals("")){
                 address = getCustomAddress("Custom");
             }
             else {
                 address = customAddress;
-                doNext(destinationType);
+                Navigate();
             }
         }
     }
 
-    private void doNext(String destinationType){
+    private void Navigate(){
         final RadioButton googTransitButton = (RadioButton) findViewById(R.id.googTransitButton);
         final RadioButton googBikeButton = (RadioButton) findViewById(R.id.googBicycleButton);
         final RadioButton googDrivingButton = (RadioButton) findViewById(R.id.googDrivingButton);
@@ -196,7 +194,7 @@ public class MainActivity extends Activity {
                     savePrefs("work", address);
                 }
 
-                doNext(destinationType);  //this line required to allow input of custom address BEFORE getting directions
+                Navigate();  //this line required to allow input of custom address BEFORE getting directions
             }
         });
         alertDialog.setNegativeButton("CANCEL", null);
