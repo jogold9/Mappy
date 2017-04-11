@@ -52,7 +52,6 @@ public class MainActivity extends Activity {
             public void onClick(View view) {
 
                 getDestination(addressFieldSpinner);
-
             }
         });
     }
@@ -66,7 +65,6 @@ public class MainActivity extends Activity {
             }
             else {
                 address = homeAddress;
-                Toast.makeText(MainActivity.this, "Home address is set to " + address, Toast.LENGTH_LONG).show();
                 Navigate();
             }
         }
@@ -77,7 +75,6 @@ public class MainActivity extends Activity {
             }
             else {
                 address = workAddress;
-                Toast.makeText(MainActivity.this, "Work address is set to " + address, Toast.LENGTH_LONG).show();
                 Navigate();
             }
         }
