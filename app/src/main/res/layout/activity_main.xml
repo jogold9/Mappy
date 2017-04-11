@@ -17,10 +17,8 @@
         android:textAllCaps="false"
         android:padding="10dp"
         android:layout_alignParentTop="true"
-        android:gravity="left"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="45dp"/>
+        android:layout_marginTop="45dp"
+        android:layout_alignLeft="@+id/NavigationChoices" />
 
     <ImageButton
         android:layout_width="45dp"
@@ -29,9 +27,9 @@
         android:alpha="0.50"
         android:id="@+id/editLocations"
         android:padding="10dp"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/dropdownEditText"
-        android:layout_marginTop="45dp" />
+        android:layout_alignTop="@+id/dropdownEditText"
+        android:layout_toRightOf="@+id/launchMapButton"
+        android:layout_toEndOf="@+id/launchMapButton" />
 
  <RadioGroup
      android:layout_width="wrap_content"
