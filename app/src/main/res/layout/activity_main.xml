@@ -17,8 +17,21 @@
         android:textAllCaps="false"
         android:padding="10dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:gravity="left"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="45dp"/>
+
+    <ImageButton
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:src="@mipmap/pencil"
+        android:alpha="0.50"
+        android:id="@+id/editLocations"
+        android:padding="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/dropdownEditText"
+        android:layout_marginTop="45dp" />
 
  <RadioGroup
      android:layout_width="wrap_content"
